@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:pirahesh_shop/data/model/order.dart';
 
 import '../model/add_to_cart_response.dart';
 import '../model/cart_response.dart';
@@ -13,6 +14,7 @@ abstract class ICartDataSource {
   Future<void> clear();
   Future<int> count();
   Future<CartResponse> getAll();
+  Future<Order> cartCreate();
 }
 
 class CartRemoteDataSource implements ICartDataSource {
@@ -40,6 +42,9 @@ class CartRemoteDataSource implements ICartDataSource {
   @override
   Future<int> count() async {
     final response = await httpClient.get('cart/count');
+    if (response.data == "") {
+      return 0;
+    }
     return response.data;
   }
 
@@ -65,5 +70,12 @@ class CartRemoteDataSource implements ICartDataSource {
   @override
   Future<void> clear() async {
     await httpClient.delete('cart/clear');
+  }
+
+  @override
+  Future<Order> cartCreate() async {
+    final res = await httpClient.post('orders/create');
+    final order = Order.fromJson(res.data);
+    return order;
   }
 }

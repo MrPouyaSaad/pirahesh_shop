@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pirahesh_shop/data/model/fav.dart';
 
+import '../../../data/model/auth_info.dart';
 import '../../../data/model/comment.dart';
 import '../../../data/model/order.dart';
 import '../../../data/model/product.dart';
@@ -16,12 +17,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc(this.profileRepository) : super(ProfileLoading()) {
     on<ProfileEvent>((event, emit) async {
       if (event is ProfileStarted) {
-        try {
-          final user = await profileRepository.getProfileInfo();
-          await Future.delayed(Duration(seconds: 2));
-          emit(ProfileSuccess(user: user));
-        } catch (e) {
-          emit(ProfilError());
+        final authInfo = event.authInfo;
+        if (authInfo == null || authInfo.accessToken.isEmpty) {
+          emit(ProfileAuthRequired());
+        } else {
+          try {
+            final user = await profileRepository.getProfileInfo();
+            await Future.delayed(Duration(seconds: 1));
+            emit(ProfileSuccess(user: user));
+          } catch (e) {
+            emit(ProfilError());
+          }
         }
       } else if (event is ProfileOrderStarted) {
         try {
@@ -45,6 +51,20 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           emit(ProfileFavProfuctsSuccess(products: productEntity));
         } catch (e) {
           emit(ProfileFavProductsError());
+        }
+      } else if (event is ProfileAuthInfoChanged) {
+        if (event.authInfo == null || event.authInfo!.accessToken.isEmpty) {
+          emit(ProfileAuthRequired());
+        } else {
+          if (state is ProfileAuthRequired) {
+            try {
+              final user = await profileRepository.getProfileInfo();
+              await Future.delayed(Duration(seconds: 1));
+              emit(ProfileSuccess(user: user));
+            } catch (e) {
+              emit(ProfilError());
+            }
+          }
         }
       }
     });

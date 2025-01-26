@@ -28,7 +28,8 @@ class _CartScreenState extends State<CartScreen> {
   StreamSubscription? stateStreamSubscription;
   final RefreshController _refreshController = RefreshController();
   bool stateIsSuccess = false;
-  bool isEmpry = true;
+  bool isEmpty = true;
+
   @override
   void initState() {
     super.initState();
@@ -54,14 +55,16 @@ class _CartScreenState extends State<CartScreen> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         appBar: AppBar(
           centerTitle: true,
-          leading: IconButton(
-              onPressed: () {
-                CartBloc(cartRepository).add(CartClearButtonClicked());
-              },
-              icon: Icon(
-                CupertinoIcons.delete,
-                color: Theme.of(context).colorScheme.error,
-              )),
+          leading: !isEmpty
+              ? IconButton(
+                  onPressed: () {
+                    CartBloc(cartRepository).add(CartClearButtonClicked());
+                  },
+                  icon: Icon(
+                    CupertinoIcons.delete,
+                    color: Theme.of(context).colorScheme.error,
+                  ))
+              : null,
           title: const Text('Cart'),
         ),
         floatingActionButton: Visibility(
@@ -73,14 +76,7 @@ class _CartScreenState extends State<CartScreen> {
                 onPressed: () {
                   final state = cartBloc!.state;
 
-                  if (state is CartSuccess) {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) => ShippingScreen(
-                    //           payablePrice: state.cartResponse.payablePrice,
-                    //           totalPrice: state.cartResponse.totalPrice,
-                    //           shippingCost: state.cartResponse.shippingCost,
-                    //         )));
-                  }
+                  if (state is CartSuccess) {}
                 },
                 label: const Text('Checkout')),
           ),
@@ -134,7 +130,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 );
               } else if (state is CartSuccess) {
-                isEmpry = false;
+                isEmpty = false;
 
                 return SmartRefresher(
                   controller: _refreshController,
@@ -191,7 +187,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 );
               } else if (state is CartAuthRequired) {
-                isEmpry = true;
+                isEmpty = true;
 
                 return EmptyView(
                     message: 'Please sign in to see your cart!',
@@ -218,10 +214,10 @@ class _CartScreenState extends State<CartScreen> {
                     ).marginAll(32),
                     image: SvgPicture.asset(
                       'assets/images/auth_required.svg',
-                      width: 140,
+                      width: 120,
                     ));
               } else if (state is CartEmpty) {
-                isEmpry = true;
+                isEmpty = true;
                 return SmartRefresher(
                   controller: _refreshController,
                   header: const ClassicHeader(
@@ -251,45 +247,6 @@ class _CartScreenState extends State<CartScreen> {
               }
             },
           ),
-        )
-
-        // ValueListenableBuilder<AuthInfo?>(
-        //   valueListenable: AuthRepository.authChangeNotifier,
-        //   builder: (context, authState, child) {
-        //     bool isAuthenticated =
-        //         authState != null && authState.accessToken.isNotEmpty;
-        //     return SizedBox(
-        //       width: MediaQuery.of(context).size.width,
-        //       child: Column(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         crossAxisAlignment: CrossAxisAlignment.center,
-        //         children: [
-        //           Text(isAuthenticated
-        //               ? 'خوش آمدید'
-        //               : 'لطفا وارد حساب کاربری خود شوید'),
-        //           isAuthenticated
-        //               ? ElevatedButton(
-        //                   onPressed: () {
-        //                     authRepository.signOut();
-        //                   },
-        //                   child: const Text('خروج از حساب'))
-        //               : ElevatedButton(
-        //                   onPressed: () {
-        //                     Navigator.of(context, rootNavigator: true).push(
-        //                         MaterialPageRoute(
-        //                             builder: (context) => const AuthScreen()));
-        //                   },
-        //                   child: const Text('ورود')),
-        //           ElevatedButton(
-        //               onPressed: () async {
-        //                 await authRepository.refreshToken();
-        //               },
-        //               child: const Text('Refresh Token')),
-        //         ],
-        //       ),
-        //     );
-        //   },
-        // ),
-        );
+        ));
   }
 }

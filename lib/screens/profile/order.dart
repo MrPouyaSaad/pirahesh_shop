@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pirahesh_shop/common/utils.dart';
 import 'package:pirahesh_shop/data/repo/profile_repository.dart';
 import 'package:pirahesh_shop/screens/profile/bloc/profile_bloc.dart';
+import 'package:pirahesh_shop/screens/widgets/empty_view.dart';
 import 'package:pirahesh_shop/screens/widgets/image.dart';
 
 import '../../data/common/constants.dart';
@@ -16,6 +18,10 @@ class OrderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Orders'),
+        centerTitle: true,
+      ),
       body: BlocProvider(
         create: (context) =>
             ProfileBloc(profileRepository)..add(ProfileOrderStarted()),
@@ -24,19 +30,28 @@ class OrderScreen extends StatelessWidget {
           if (state is ProfileOrderLoading || state is ProfileLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (state is ProfileOrderSuccess) {
-            return SafeArea(
-              child: ListView.builder(
-                itemCount: state.order.length,
-                itemBuilder: (context, index) {
-                  final orderItem = state.order[index];
-                  return OrderItemWidget(
-                    order: state.order[index], // آیتم سفارش
-                  );
-                },
-              ),
-            );
+            if (state.order.isEmpty) {
+              return Center(
+                child: EmptyView(
+                    message: 'No Order!',
+                    image: SvgPicture.asset('assets/images/no_data.svg',
+                        width: 120)),
+              );
+            } else
+              return SafeArea(
+                child: ListView.builder(
+                  itemCount: state.order.length,
+                  itemBuilder: (context, index) {
+                    {
+                      return OrderItemWidget(
+                        order: state.order[index],
+                      );
+                    }
+                  },
+                ),
+              );
           } else if (state is ProfilOrderError) {
-            return Center(child: Text('خطا در بارگذاری سفارشات'));
+            return Center(child: Text('Error'));
           } else {
             throw UnimplementedError();
           }

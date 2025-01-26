@@ -46,3 +46,5 @@ final class ProfileFavProfuctsSuccess extends ProfileState {
 
   ProfileFavProfuctsSuccess({required this.products});
 }
+
+final class ProfileAuthRequired extends ProfileState {}

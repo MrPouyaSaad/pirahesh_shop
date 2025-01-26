@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pirahesh_shop/data/model/order.dart';
 
 import '../../common/http_client.dart';
 import '../model/add_to_cart_response.dart';
@@ -46,4 +47,7 @@ class CartRepository implements ICartRepository {
   Future<void> clear() {
     return dataSource.clear();
   }
+
+  @override
+  Future<Order> cartCreate() => dataSource.cartCreate();
 }

@@ -21,3 +21,5 @@ class CartError extends CartState {
 class CartEmpty extends CartState {}
 
 class CartAuthRequired extends CartState {}
+
+class CreateButtonLoading extends CartState {}
