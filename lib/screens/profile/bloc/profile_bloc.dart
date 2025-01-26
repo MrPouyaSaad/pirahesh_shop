@@ -7,6 +7,7 @@ import '../../../data/model/comment.dart';
 import '../../../data/model/order.dart';
 import '../../../data/model/product.dart';
 import '../../../data/model/user.dart';
+import '../../../data/repo/auth_repository.dart';
 import '../../../data/repo/profile_repository.dart';
 
 part 'profile_event.dart';
@@ -29,6 +30,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             emit(ProfilError());
           }
         }
+      } else if (event is ProfileSignOutButtonClicked) {
+        await authRepository.signOut();
+        emit(ProfileAuthRequired());
       } else if (event is ProfileOrderStarted) {
         try {
           emit(ProfileOrderLoading());

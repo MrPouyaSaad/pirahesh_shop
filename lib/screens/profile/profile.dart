@@ -29,6 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
+    profileBloc = ProfileBloc(profileRepository);
     AuthRepository.authChangeNotifier.addListener(authChangeNotifierListener);
     super.initState();
   }
@@ -58,14 +59,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: BlocProvider(
           create: (context) {
-            final bloc = ProfileBloc(profileRepository)
-              ..add(ProfileStarted(
-                  authInfo: AuthRepository.authChangeNotifier.value));
-            stateStreamSubscription = bloc.stream.listen((state) {
+            profileBloc!.add(ProfileStarted(
+                authInfo: AuthRepository.authChangeNotifier.value));
+            stateStreamSubscription = profileBloc!.stream.listen((state) {
               setState(() {});
             });
 
-            return bloc;
+            return profileBloc!;
           },
           child: BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
@@ -204,7 +204,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.logout,
                       isLogOut: true,
                       onTap: () {
-                        authRepository.signOut();
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              title: const Text(
+                                'Log Out',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: const Text(
+                                'Are you sure you want to log out? You will need to sign in again to access your account.',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    profileBloc!
+                                        .add(ProfileSignOutButtonClicked());
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.redAccent,
+                                  ),
+                                  child: const Text(
+                                    'Log Out',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
                   ],

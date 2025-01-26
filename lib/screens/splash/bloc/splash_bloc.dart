@@ -19,7 +19,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         try {
           emit(SplashLoading());
           final list = await productRepository.getFavProductsIds();
-          cartRepository.count();
+          await cartRepository.count();
           emit(SplashSuccess(favList: list));
         } catch (e) {
           emit(SplashError());

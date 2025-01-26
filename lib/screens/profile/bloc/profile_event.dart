@@ -24,3 +24,5 @@ final class ProfileAuthInfoChanged extends ProfileEvent {
 
   ProfileAuthInfoChanged({required this.authInfo});
 }
+
+final class ProfileSignOutButtonClicked extends ProfileEvent {}
