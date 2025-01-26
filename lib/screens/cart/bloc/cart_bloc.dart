@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../common/exceptions.dart';
 import '../../../data/model/auth_info.dart';
 import '../../../data/model/cart_response.dart';
-import '../../../data/model/order.dart';
+
 import '../../../data/repo/cart_repository.dart';
 
 part 'cart_event.dart';
