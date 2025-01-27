@@ -7,7 +7,7 @@ extension PriceLabel on double {
   String get withPriceLabel => this > 0 ? '$separateByComma \$' : 'Free';
 
   String get separateByComma {
-    final numberFormat = NumberFormat.decimalPattern();
+    final numberFormat = NumberFormat.currency(symbol: '');
     return numberFormat.format(this);
   }
 }

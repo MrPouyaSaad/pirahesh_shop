@@ -1,10 +1,10 @@
+import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pirahesh_shop/data/repo/auth_repository.dart';
 import 'package:pirahesh_shop/data/repo/cart_repository.dart';
 import 'package:pirahesh_shop/data/repo/product_repository.dart';
-
 import '../../root.dart';
 import 'bloc/splash_bloc.dart';
 
@@ -21,23 +21,27 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3)).then((_) {
-      if (mounted) {
-        setState(() {
-          isNavigated = true;
-        });
-      }
-    });
+    if (AuthRepository.authChangeNotifier.value == null) {
+      Future.delayed(const Duration(seconds: 3)).then((_) {
+        if (mounted && !isNavigated) {
+          setState(() {
+            isNavigated = true;
+          });
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final isAuthEmpty = AuthRepository.authChangeNotifier.value == null ||
-        AuthRepository.authChangeNotifier.value?.accessToken == '';
+        AuthRepository.authChangeNotifier.value?.refreshToken == '';
+    log("Auth empty status: $isAuthEmpty");
 
     if (isNavigated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!isNavigated) return;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RootScreen()),
         );
@@ -65,9 +69,14 @@ class _SplashScreenState extends State<SplashScreen> {
                 SplashBloc(productRepository, authRepository, cartRepository);
             bloc.stream.forEach((state) {
               if (state is SplashSuccess) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const RootScreen()),
-                );
+                if (!isNavigated) {
+                  setState(() {
+                    isNavigated = true;
+                  });
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const RootScreen()),
+                  );
+                }
               }
             });
             return bloc..add(SplashStarted());
@@ -118,6 +127,29 @@ class _SplashScreenState extends State<SplashScreen> {
                         ),
                         const SizedBox(height: 32),
                       ],
+                    ),
+                  ),
+                );
+              } else if (state is SplashAuthError) {
+                authRepository.signOut();
+                log("Auth after set null: " +
+                    AuthRepository.authChangeNotifier.value.toString());
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!isNavigated) {
+                    setState(() {
+                      isNavigated = true;
+                    });
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                          builder: (context) => const RootScreen()),
+                    );
+                  }
+                });
+                return SafeArea(
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/nike_logo.png',
+                      width: 128,
                     ),
                   ),
                 );

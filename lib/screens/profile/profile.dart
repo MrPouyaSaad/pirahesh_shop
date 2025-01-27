@@ -142,25 +142,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
-                            Spacer(),
-                            TextButton(
-                              onPressed: () {
-                                // Handle edit button
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: themeData.colorScheme.surface,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: Constants.primaryRadius),
-                                side: BorderSide(
-                                  width: 1,
-                                  color: themeData.colorScheme.surface,
-                                ),
-                              ),
-                              child: Text(
-                                'Edit',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ).marginOnly(right: 6)
                           ],
                         ),
                       ).marginSymmetric(horizontal: Constants.primaryPadding),

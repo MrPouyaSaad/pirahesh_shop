@@ -48,6 +48,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           await Future.delayed(Duration(seconds: 2));
           await cartRepository.delete(productID);
           final cartResponse = await cartRepository.getAll();
+          await cartRepository.count();
           if (cartResponse.cartItems.isEmpty) {
             emit(CartEmpty());
           } else {
@@ -80,6 +81,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         await Future.delayed(Duration(seconds: 2));
 
         await cartRepository.increase(productID);
+        await cartRepository.count();
+
         emit(calculatePriceInfo(await cartRepository.getAll()));
       } else if (event is CartDecreaseCountButtonClicked) {
         int productID = 0;
@@ -98,6 +101,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         await Future.delayed(Duration(seconds: 2));
 
         await cartRepository.decrease(productID);
+        await cartRepository.count();
+
         emit(calculatePriceInfo(await cartRepository.getAll()));
       }
     });
@@ -130,7 +135,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       payablePrice += cartItem.product.price * cartItem.quantity;
     }
 
-    shippingCost = payablePrice >= 1000 ? 0 : 15;
+    shippingCost = 0;
 
     cartResponse.totalPrice = totalPrice;
     cartResponse.payablePrice = payablePrice + shippingCost;

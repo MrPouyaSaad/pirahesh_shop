@@ -9,6 +9,8 @@ sealed class SplashState extends Equatable {
 
 final class SplashLoading extends SplashState {}
 
+final class SplashAuthError extends SplashState {}
+
 final class SplashError extends SplashState {}
 
 final class SplashSuccess extends SplashState {

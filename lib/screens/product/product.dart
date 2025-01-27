@@ -91,32 +91,42 @@ class ProductList extends StatelessWidget {
         padding: EdgeInsets.all(16),
         itemCount: products.length,
         itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              boxShadow: Constants.primaryBoxShadow(context),
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: Constants.primaryRadius,
-            ),
-            child: Row(
-              children: [
-                ImageLoadingService(
-                  imageUrl: Constants.baseImageUrl + products[index].imageUrl,
-                  width: 100,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      bottomLeft: Radius.circular(8)),
-                ),
-                SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(products[index].title),
-                    SizedBox(height: 16),
-                    Text(products[index].price.withPriceLabel),
-                  ],
-                )
-              ],
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) =>
+                        ProductDetailScreen(product: products[index]),
+                  ));
+            },
+            child: Container(
+              margin: EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                boxShadow: Constants.primaryBoxShadow(context),
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: Constants.primaryRadius,
+              ),
+              child: Row(
+                children: [
+                  ImageLoadingService(
+                    imageUrl: Constants.baseImageUrl + products[index].imageUrl,
+                    width: 100,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        bottomLeft: Radius.circular(8)),
+                  ),
+                  SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(products[index].title),
+                      SizedBox(height: 16),
+                      Text(products[index].price.withPriceLabel),
+                    ],
+                  )
+                ],
+              ),
             ),
           );
         });

@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:pirahesh_shop/data/model/cart_response.dart';
+import 'package:pirahesh_shop/screens/cart/order/checkout_screen.dart';
 
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -34,6 +37,7 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     super.initState();
     AuthRepository.authChangeNotifier.addListener(authChangeNotifierListener);
+    log(AuthRepository.authChangeNotifier.value.toString());
   }
 
   void authChangeNotifierListener() {
@@ -76,7 +80,13 @@ class _CartScreenState extends State<CartScreen> {
                 onPressed: () {
                   final state = cartBloc!.state;
 
-                  if (state is CartSuccess) {}
+                  if (state is CartSuccess) {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => CheckoutScreen(),
+                        ));
+                  }
                 },
                 label: const Text('Checkout')),
           ),

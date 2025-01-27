@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pirahesh_shop/common/utils.dart';
 import 'package:pirahesh_shop/data/repo/profile_repository.dart';
+import 'package:pirahesh_shop/screens/cart/factor/factor.dart';
 import 'package:pirahesh_shop/screens/profile/bloc/profile_bloc.dart';
 import 'package:pirahesh_shop/screens/widgets/empty_view.dart';
 import 'package:pirahesh_shop/screens/widgets/image.dart';
@@ -88,9 +89,11 @@ class OrderItemWidget extends StatelessWidget {
                 : [1, 2, 3];
     return GestureDetector(
       onTap: () {
-        // Navigator.of(context).push(CupertinoPageRoute(
-        //   builder: (context) => const OrderDetailsScreen(),
-        // ));
+        Navigator.of(context).push(CupertinoPageRoute(
+          builder: (context) => FactorScreen(
+            order: order,
+          ),
+        ));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -104,40 +107,37 @@ class OrderItemWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 68,
-                    child: ListView.builder(
-                      itemCount: order.orderItems.length,
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Expanded(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 4),
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: Constants.primaryRadius,
-                                  child: ImageLoadingService(
-                                      // width: 42,
-                                      imageUrl: Constants.baseImageUrl +
-                                          order.orderItems[index].product
-                                              .imageUrl),
-                                ),
+                SizedBox(
+                  height: 68,
+                  child: ListView.builder(
+                    itemCount: order.orderItems.length,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return SizedBox(
+                        width: 42, // Width for each image
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 4),
+                            ClipRRect(
+                              borderRadius: Constants.primaryRadius,
+                              child: ImageLoadingService(
+                                imageUrl: Constants.baseImageUrl +
+                                    order.orderItems[index].product.imageUrl,
                               ),
-                              Text(
-                                '×${order.orderItems[index].count}',
-                                style: TextStyle(fontSize: 11),
-                              )
-                            ],
-                          ).marginSymmetric(horizontal: 2),
-                        );
-                      },
-                    ),
+                            ),
+                            Text(
+                              '×${order.orderItems[index].count}',
+                              style: TextStyle(fontSize: 11),
+                            ),
+                          ],
+                        ).marginSymmetric(horizontal: 2),
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(width: Constants.primaryPadding * 2),
+                // const SizedBox(width: Constants.primaryPadding * 2),
+                Spacer(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pirahesh_shop/common/utils.dart';
 import 'package:pirahesh_shop/data/common/constants.dart';
+import 'package:pirahesh_shop/data/repo/auth_repository.dart';
 import 'package:pirahesh_shop/data/repo/product_repository.dart';
 import 'package:pirahesh_shop/root.dart';
+import 'package:pirahesh_shop/screens/auth/auth.dart';
 import 'package:pirahesh_shop/screens/cart/price_info.dart';
 import 'package:pirahesh_shop/screens/product/add_comment.dart';
 
@@ -65,15 +68,35 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               floatingActionButton: SizedBox(
                 width: MediaQuery.of(context).size.width - 48,
                 child: FloatingActionButton.extended(
+                  backgroundColor:
+                      AuthRepository.authChangeNotifier.value == null
+                          ? Theme.of(context).colorScheme.secondary
+                          : null,
                   onPressed: () {
-                    BlocProvider.of<ProductBloc>(context)
-                        .add(CartAddButtonClick(widget.product.id));
+                    if (AuthRepository.authChangeNotifier.value == null) {
+                      Navigator.of(context, rootNavigator: true)
+                          .push(MaterialPageRoute(
+                        builder: (context) => AuthScreen(),
+                      ))
+                          .then((_) {
+                        if (mounted) {
+                          setState(() {
+                            log('Returned from AuthScreen and updated state');
+                          });
+                        }
+                      });
+                    } else {
+                      BlocProvider.of<ProductBloc>(context)
+                          .add(CartAddButtonClick(widget.product.id));
+                    }
                   },
-                  label: state is ProductAddToCartButtonLoading
-                      ? CupertinoActivityIndicator(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        )
-                      : const Text('Add to Cart'),
+                  label: AuthRepository.authChangeNotifier.value == null
+                      ? Text('Sign in to add to cart')
+                      : state is ProductAddToCartButtonLoading
+                          ? CupertinoActivityIndicator(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            )
+                          : const Text('Add to Cart'),
                 ),
               ),
               body: CustomScrollView(

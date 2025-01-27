@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:pirahesh_shop/data/repo/profile_repository.dart';
+import 'package:pirahesh_shop/screens/cart/cart.dart';
 import 'package:pirahesh_shop/screens/widgets/empty_view.dart';
 
 import '../product/comment/comment.dart';
@@ -41,7 +43,7 @@ class UserComments extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return CommentItem(
                     comment: state.comments[index],
-                  );
+                  ).marginSymmetric(vertical: 8);
                 },
               ),
             );

@@ -15,35 +15,33 @@ class BannerSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 2,
-      child: Stack(
+      aspectRatio: 1.7,
+      child: Column(
         children: [
-          PageView.builder(
-            controller: _controller,
-            itemCount: banners.length,
-            physics: defaultScrollPhysics,
-            itemBuilder: (context, index) => _Slide(banner: banners[index]),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 8,
-            child: Center(
-              child: SmoothPageIndicator(
-                controller: _controller,
-                count: banners.length,
-                axisDirection: Axis.horizontal,
-                effect: WormEffect(
-                    spacing: 4.0,
-                    radius: 4.0,
-                    dotWidth: 20.0,
-                    dotHeight: 2.0,
-                    paintStyle: PaintingStyle.fill,
-                    dotColor: Colors.grey.shade400,
-                    activeDotColor: Theme.of(context).colorScheme.onSurface),
-              ),
+          Expanded(
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: banners.length,
+              physics: defaultScrollPhysics,
+              itemBuilder: (context, index) => _Slide(banner: banners[index]),
             ),
-          )
+          ),
+          SizedBox(height: 16),
+          Center(
+            child: SmoothPageIndicator(
+              controller: _controller,
+              count: banners.length,
+              axisDirection: Axis.horizontal,
+              effect: WormEffect(
+                  spacing: 4.0,
+                  radius: 4.0,
+                  dotWidth: 20.0,
+                  dotHeight: 2.0,
+                  paintStyle: PaintingStyle.fill,
+                  dotColor: Colors.grey.shade400,
+                  activeDotColor: Theme.of(context).colorScheme.onSurface),
+            ),
+          ),
         ],
       ),
     );

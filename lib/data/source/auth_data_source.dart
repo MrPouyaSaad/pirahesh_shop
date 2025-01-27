@@ -2,10 +2,11 @@ import 'package:dio/dio.dart';
 
 import '../model/auth_info.dart';
 import '../common/http_response_validator.dart';
+import '../model/user.dart';
 
 abstract class IAuthDataSource {
   Future<AuthInfo> login(String username, String password);
-  Future<AuthInfo> signUp(String username, String password);
+  Future<AuthInfo> signUp(User user, String pass);
   Future<AuthInfo> refreshToken(String token);
 }
 
@@ -30,11 +31,8 @@ class AuthRemoteDataSource
 
   @override
   Future<AuthInfo> refreshToken(String token) async {
-    final response = await httpClient.post("auth/token", data: {
-      "grant_type": "refresh_token",
-      "refresh_token": token,
-      "client_id": 2,
-      // "client_secret": Constants.clientSecret
+    final response = await httpClient.post("auth/refresh", data: {
+      "refreshToken": token,
     });
 
     validateResponse(response);
@@ -44,16 +42,16 @@ class AuthRemoteDataSource
   }
 
   @override
-  Future<AuthInfo> signUp(String username, String password) async {
+  Future<AuthInfo> signUp(User user, String pass) async {
     final response = await httpClient.post("auth/register", data: {
-      "name": "Pouya",
-      "phoneNumber": username,
-      "password": password,
-      "postalCode": "1234567890",
-      "address": "Tabriz, Azad Univercity"
+      "name": user.name,
+      "phoneNumber": user.phoneNumber,
+      "password": pass,
+      "postalCode": user.postalCode,
+      "address": user.address
     });
     validateResponse(response);
 
-    return login(username, password);
+    return login(user.phoneNumber, pass);
   }
 }

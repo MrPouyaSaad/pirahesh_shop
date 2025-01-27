@@ -1,7 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pirahesh_shop/data/model/user.dart';
 
 import '../../data/repo/auth_repository.dart';
 import '../../data/repo/cart_repository.dart';
@@ -23,6 +24,13 @@ class _AuthScreenState extends State<AuthScreen> {
       TextEditingController(text: '09143660476');
   final TextEditingController passwordController =
       TextEditingController(text: '12345678');
+  final TextEditingController addressController =
+      TextEditingController(text: 'Tabriz, Azad Univercity');
+  final TextEditingController postalCodeController =
+      TextEditingController(text: "1234567890");
+  final TextEditingController nameController =
+      TextEditingController(text: 'Pouya Saad');
+
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
@@ -88,106 +96,146 @@ class _AuthScreenState extends State<AuthScreen> {
                 },
                 builder: (context, state) {
                   final authBloc = BlocProvider.of<AuthBloc>(context);
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/nike_logo.png',
-                        color: Colors.white,
-                        width: 120,
-                      ),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      Text(
-                        state.isLogin ? 'Welcome Back' : 'Welcome to Nike',
-                        style: const TextStyle(
-                            color: onBackground,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 32,
-                      ),
-                      Text(
-                        state.isLogin
-                            ? 'Login your account'
-                            : 'Create your account',
-                        style:
-                            const TextStyle(color: onBackground, fontSize: 14),
-                      ),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      TextField(
-                        controller: usernameController,
-                        style: textFieldStyle,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          label: Text('Phone Number '),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      _PasswordTextField(
-                        onBackground: onBackground,
-                        passwordController: passwordController,
-                        textFieldStyle: textFieldStyle,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          authBloc.add(
-                            AuthButtonClicked(
-                              username: usernameController.text,
-                              password: passwordController.text,
+                  return Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/nike_logo.png',
+                            color: Colors.white,
+                            width: 120,
+                          ),
+                          const SizedBox(height: 48),
+                          Text(
+                            state.isLogin ? 'Welcome Back' : 'Welcome to Nike',
+                            style: const TextStyle(
+                                color: onBackground,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            state.isLogin
+                                ? 'Login your account'
+                                : 'Create your account',
+                            style: const TextStyle(
+                                color: onBackground, fontSize: 14),
+                          ),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          if (!state.isLogin) ...[
+                            const SizedBox(
+                              height: 16,
                             ),
-                          );
-                        },
-                        child: state is AuthLoading
-                            ? const ButtonLoadingWidget()
-                            : Text(
-                                state.isLogin ? 'Login' : 'Sign Up',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14),
+                            TextField(
+                              controller: nameController,
+                              style: textFieldStyle,
+                              decoration: const InputDecoration(
+                                label: Text('Name'),
                               ),
-                      ),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          authBloc.add(AuthModeChangeButtonClicked());
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              state.isLogin
-                                  ? 'Don\'t have an account?'
-                                  : 'Already have an account?',
-                              style: TextStyle(
-                                  color: onBackground.withOpacity(0.7)),
                             ),
                             const SizedBox(
-                              width: 8,
+                              height: 16,
                             ),
-                            Text(
-                              state.isLogin ? 'Sign Up' : 'Login',
-                              style: TextStyle(
-                                color: themeData.colorScheme.primary,
-                                decoration: TextDecoration.underline,
-                                decorationColor: themeData.colorScheme.primary,
+                          ],
+                          TextField(
+                            controller: usernameController,
+                            style: textFieldStyle,
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(
+                              label: Text('Phone Number '),
+                            ),
+                          ),
+                          if (!state.isLogin) ...[
+                            const SizedBox(height: 16),
+                            TextField(
+                              controller: addressController,
+                              style: textFieldStyle,
+                              decoration: const InputDecoration(
+                                label: Text('Address'),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            TextField(
+                              controller: postalCodeController,
+                              style: textFieldStyle,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                label: Text('Postal Code'),
                               ),
                             ),
                           ],
-                        ),
-                      )
-                    ],
+                          SizedBox(height: 16),
+                          _PasswordTextField(
+                            onBackground: onBackground,
+                            passwordController: passwordController,
+                            textFieldStyle: textFieldStyle,
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              authBloc.add(
+                                AuthButtonClicked(
+                                    username: usernameController.text,
+                                    password: passwordController.text,
+                                    user: User(
+                                        name: nameController.text,
+                                        phoneNumber: usernameController.text,
+                                        address: addressController.text,
+                                        postalCode: postalCodeController.text)),
+                              );
+                            },
+                            child: state is AuthLoading
+                                ? const ButtonLoadingWidget()
+                                : Text(
+                                    state.isLogin ? 'Login' : 'Sign Up',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
+                                  ),
+                          ),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              authBloc.add(AuthModeChangeButtonClicked());
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  state.isLogin
+                                      ? 'Don\'t have an account?'
+                                      : 'Already have an account?',
+                                  style: TextStyle(
+                                      color: onBackground.withOpacity(0.7)),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  state.isLogin ? 'Sign Up' : 'Login',
+                                  style: TextStyle(
+                                    color: themeData.colorScheme.primary,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor:
+                                        themeData.colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),

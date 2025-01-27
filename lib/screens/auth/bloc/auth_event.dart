@@ -12,8 +12,10 @@ final class AuthStarted extends AuthEvent {}
 final class AuthButtonClicked extends AuthEvent {
   final String username;
   final String password;
+  final User? user;
 
-  const AuthButtonClicked({required this.username, required this.password});
+  const AuthButtonClicked(
+      {required this.username, required this.password, this.user});
 
   @override
   List<Object> get props => [username, password];

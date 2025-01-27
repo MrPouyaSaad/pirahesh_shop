@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pirahesh_shop/data/common/constants.dart';
 
 import '../../../data/model/comment.dart';
+import '../../widgets/image.dart';
 
 class CommentItem extends StatelessWidget {
   final CommentEntity comment;
@@ -23,6 +24,27 @@ class CommentItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            padding: const EdgeInsets.all(Constants.primaryPadding / 2),
+            decoration: BoxDecoration(
+              color: themeData.colorScheme.surface,
+              borderRadius: Constants.primaryRadius,
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: ImageLoadingService(
+                      imageUrl: Constants.baseImageUrl +
+                          comment.productEntity.imageUrl),
+                ),
+                const SizedBox(width: Constants.primaryPadding / 2),
+                Text(comment.productEntity.title),
+              ],
+            ),
+          ),
+          SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
